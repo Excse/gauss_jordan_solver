@@ -1,35 +1,8 @@
+#include "gauss.h"
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
-
-static const int N = 5;
-
-typedef double Matrix[N][N + 1];
-typedef std::vector<double> Output;
-
-void gauss_jordan(Matrix &matrix);
-
-bool is_row_zero(const Matrix &matrix, size_t pivot_row, size_t pivot_column);
-
-void print_matrix(const Matrix &matrix, size_t row = 0, size_t column = 0);
-
-int main() {
-  Matrix matrix = {
-    {2, -1, 2, 6, -10, -9},
-    {-7, 5, -9, 9, 2, -6},
-    {1, -6, -4, -3, 10, -6},
-    {-3, -4, 4, 0, 9, 4},
-    {10, 9, 7, -6, 1, 6},
-  };
-
-  gauss_jordan(matrix);
-
-  for (size_t row = 0; row < N; row++) {
-    std::cout << "x" << row + 1 << " = " << matrix[row][N] << std::endl;
-  }
-
-  return 0;
-}
 
 // Im schlechtesten Fall: O(n^3)
 void gauss_jordan(Matrix &matrix) {
