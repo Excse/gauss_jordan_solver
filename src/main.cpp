@@ -5,6 +5,7 @@
 static const int N = 5;
 
 typedef double Matrix[N][N + 1];
+typedef std::vector<double> Output;
 
 void gauss_jordan(Matrix &matrix);
 
@@ -20,18 +21,25 @@ int main() {
     {-3, -4, 4, 0, 9, 4},
     {10, 9, 7, -6, 1, 6},
   };
+
   gauss_jordan(matrix);
+
+  for (size_t row = 0; row < N; row++) {
+    std::cout << "x" << row + 1 << " = " << matrix[row][N] << std::endl;
+  }
+
   return 0;
 }
 
+// Im schlechtesten Fall: O(n^3)
 void gauss_jordan(Matrix &matrix) {
-  std::cout << "Gestartet mit:" << std::endl;
-  print_matrix(matrix);
-  std::cout << std::endl;
-
   size_t pivot_row = 0, pivot_column = 0;
+
+  // Laufzeit der Schleife: O(n)
+  // Somit schlechteste Laufzeit: O(n^3)
   while (pivot_row < N && pivot_column < N) {
     // 1. Man sucht die erste Spalte bei der an mindestens einer Stelle keine Null steht.
+    // Laufzeit im schlechtesten Fall: O(n)
     if(is_row_zero(matrix, pivot_row, pivot_column)) {
       pivot_column++;
       continue;
@@ -39,6 +47,7 @@ void gauss_jordan(Matrix &matrix) {
 
     // 2. Ist die oberste Zahl eine 0, so vertausche die Zeile mit einer anderen die keine
     //    Null enthält.
+    //    Laufzeit im schlechtesten Fall: O(n)
     if (matrix[pivot_row][pivot_column] == 0) {
       for (size_t row = pivot_row + 1; row < N; row++) {
         if (matrix[row][pivot_column] != 0) {
@@ -50,6 +59,7 @@ void gauss_jordan(Matrix &matrix) {
 
     // 3. Nun wird die erste Zeile anhand der ersten Zahl normiert, so dass das erste Element
     //    eine 1 ist.
+    //    Laufzeit im schlechtesten Fall: O(n)
     double factor = matrix[pivot_row][pivot_column];
     for (size_t column = pivot_column; column < N + 1; column++) {
       matrix[pivot_row][column] /= factor;
@@ -57,6 +67,7 @@ void gauss_jordan(Matrix &matrix) {
 
     // 4. Nun wird die erste Zahl der übrigen Zeilen zu null gemacht, indem ein Vielfaches der
     //    erstens Zeile abgezogen wird.
+    //    Laufzeit im schlechtesten Fall: O(n^2)
     for (size_t row = pivot_row + 1; row < N; row++) {
       double factor = matrix[row][pivot_column];
 
@@ -72,6 +83,7 @@ void gauss_jordan(Matrix &matrix) {
 
   // 6. Nun zieht man danach von den darüberliegenden Zeilen entsprechende Vielfache ab,
   //    sodass über einer führenden 1 nur Nullen stehen.
+  //    Laufzeit im schlechtesten Fall: O(n^3)
   for (size_t row = N - 1; row > 0; row--) {
     for (int upper_row = row - 1; upper_row >= 0; upper_row--) {
       double factor = matrix[upper_row][row];
@@ -81,18 +93,9 @@ void gauss_jordan(Matrix &matrix) {
       }
     }
   }
-
-  std::cout << "Fertig mit:" << std::endl;
-  print_matrix(matrix);
-  std::cout << std::endl;
-
-  std::cout << "Ergebnisse:" << std::endl;
-  for (size_t row = 0; row < N; row++) {
-    std::cout << "x" << row + 1 << " = " << matrix[row][N] << std::endl;
-  }
 }
 
-// Im schlechtesten Fall O(n)
+// Laufzeit im schlechtesten Fall: O(n)
 bool is_row_zero(const Matrix &matrix, size_t pivot_row, size_t pivot_column) {
   for (size_t row = pivot_row; row < N; row++) {
     if (matrix[row][pivot_column] != 0) {
@@ -103,7 +106,7 @@ bool is_row_zero(const Matrix &matrix, size_t pivot_row, size_t pivot_column) {
   return true;
 }
 
-// Im schlechtesten Fall O(n^2)
+// Laufzeit im schlechtesten Fall: O(n^2)
 void print_matrix(const Matrix &matrix, size_t row, size_t column) {
   for (size_t i = row; i < N; i++) {
     for (size_t j = column; j < N; j++) {
