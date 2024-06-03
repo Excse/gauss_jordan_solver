@@ -90,3 +90,51 @@ void print_matrix(const Matrix &matrix, size_t row, size_t column) {
     std::cout << "| " << matrix[i][N] << std::endl;
   }
 }
+
+#include <random>
+
+double stability(size_t amount, double lower_bound, double upper_bound) {
+  std::random_device random_device;
+  std::mt19937 gen(random_device());
+  std::uniform_real_distribution<double> dist1(-10000000, 10000000);
+  std::uniform_real_distribution<double> dist2(upper_bound, lower_bound);
+
+  double average_diff = 0;
+
+  for (size_t i = 0; i < amount; i++) {
+    Matrix input = {
+      {dist1(gen), dist1(gen), dist1(gen), dist1(gen)},
+      {dist1(gen), dist1(gen), dist1(gen), dist1(gen)},
+      {dist1(gen), dist1(gen), dist1(gen), dist1(gen)}
+    };
+    
+    Matrix disturbed;
+    copy(input, disturbed);
+
+    for (size_t i = 0; i < N; i++) {
+      disturbed[i][i] += dist2(gen);
+    }
+
+    gauss_jordan(input);
+    gauss_jordan(disturbed);
+
+    double diff = 0;
+    for (size_t i = 0; i < N; i++) {
+      diff += std::abs(input[i][N] - disturbed[i][N]);
+    }
+
+    average_diff += diff;
+  }
+
+  average_diff /= amount;
+
+  return average_diff;
+}
+
+void copy(const Matrix &source, Matrix &destination) {
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N + 1; ++j) {
+            destination[i][j] = source[i][j];
+        }
+    }
+}
