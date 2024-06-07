@@ -1,8 +1,8 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
-#include <iostream>
 #include <cstddef>
+#include <iostream>
 #include <vector>
 
 class Matrix {
@@ -27,13 +27,9 @@ public:
 
   void swap_rows(size_t first, size_t second);
 
-  size_t cols() const {
-    return this->_cols;
-  }
+  size_t cols() const { return this->_cols; }
 
-  size_t rows() const {
-    return this->_rows;
-  }
+  size_t rows() const { return this->_rows; }
 };
 
 #endif /* MATRIX_H_ */
