@@ -4,6 +4,9 @@
 #include "pbma.h"
 #include "solver.h"
 
+/**
+ * Gibt die Hilfe für das Programm aus.
+ */
 void print_help() {
   std::cout << "Es können nur folgende zusätzliche Flags verwendet werden: "
             << std::endl;
@@ -24,12 +27,18 @@ void print_help() {
             << std::endl;
 }
 
+/**
+ * Prüft die Stabilität des Gauss-Jordan-Algorithmus.
+ */
 void check_stability(size_t amount, size_t rows, size_t cols,
                      double lower_bound, double upper_bound) {
   double result = stability(amount, rows, cols, lower_bound, upper_bound);
-  std::cout << "Stabilität: " << result << std::endl;
+  std::cout << "Fehlerrate: " << result << std::endl;
 }
 
+/**
+* Löst das eingegebene Gleichungssystem mithilfe des Gauss-Jordan-Algorithmus.
+ */
 void solve() {
   size_t rows, columns;
 
@@ -47,6 +56,10 @@ void solve() {
   std::cout << matrix;
 }
 
+/**
+ * Die Hauptfunktion des Programms. Es werden die Argumente eingelesen und
+ * entweder das Gleichungssystem gelöst oder die Stabilität des Algorithmus überprüft.
+ */
 int main(int argc, const char *argv[]) {
   args_t args(argc, argv);
 

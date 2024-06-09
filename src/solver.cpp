@@ -2,9 +2,17 @@
 
 #include <random>
 
+/**
+ * Löst das Gleichungssystem mithilfe des Gauss-Jordan-Verfahrens. Die übergebene
+ * Matrix wird dabei verändert.
+ */
 void solve_matrix(Matrix &matrix) {
+  // Hilfsvariablen, welche genutzt werden um eine Restmatrix zu verwirklichen.
   size_t p_row = 0, p_col = 0;
 
+  // Ein Teil des 5. Schrittes, indem der Algorithmus immer wieder auf die Restmatrix
+  // angewandt wird. Dieser Schritt wird so lange wiederholt, bis es keine Restmatrix
+  // mehr gibt.
   while (p_row < matrix.rows() && p_col < matrix.cols()) {
     // 1. Man sucht die erste Spalte bei der an mindestens einer Stelle keine
     // Null steht.
@@ -14,8 +22,7 @@ void solve_matrix(Matrix &matrix) {
     }
 
     // 2. Ist die oberste Zahl eine 0, so vertausche die Zeile mit einer anderen
-    // die keine
-    //    Null enthält.
+    // die keine Null enthält.
     if (matrix(p_row, p_col) == 0) {
       for (size_t row = p_row + 1; row < matrix.rows(); row++) {
         if (matrix(row, p_col) != 0) {
@@ -26,16 +33,14 @@ void solve_matrix(Matrix &matrix) {
     }
 
     // 3. Nun wird die erste Zeile anhand der ersten Zahl normiert, so dass das
-    // erste Element
-    //    eine 1 ist.
+    // erste Element eine 1 ist.
     double factor = matrix(p_row, p_col);
     for (size_t col = p_col; col < matrix.cols(); col++) {
       matrix(p_row, col) /= factor;
     }
 
     // 4. Nun wird die erste Zahl der übrigen Zeilen zu null gemacht, indem ein
-    // Vielfaches der
-    //    erstens Zeile abgezogen wird.
+    // Vielfaches der erstens Zeile abgezogen wird.
     for (size_t row = p_row + 1; row < matrix.rows(); row++) {
       double factor = matrix(row, p_col);
 
@@ -51,28 +56,39 @@ void solve_matrix(Matrix &matrix) {
   }
 
   // 6. Nun zieht man danach von den darüberliegenden Zeilen entsprechende
-  // Vielfache ab,
-  //    sodass über einer führenden 1 nur Nullen stehen.
-  for (size_t row = matrix.rows() - 1; row > 0; row--) {
-    for (int u_row = row - 1; u_row >= 0; u_row--) {
-      double factor = matrix(u_row, row);
+  // Vielfache ab, sodass über einer führenden 1 nur Nullen stehen.
+  for (size_t index = matrix.rows() - 1; index > 0; index--) {
+    for (int u_row = index - 1; u_row >= 0; u_row--) {
+      double factor = matrix(u_row, index);
 
       for (size_t col = 0; col < matrix.cols(); col++) {
-        matrix(u_row, col) -= factor * matrix(row, col);
+        matrix(u_row, col) -= factor * matrix(index, col);
       }
     }
   }
 }
 
+/**
+ * Prüft den Algorithmus auf die Stabilität, indem n Matrizen mit den gegebenen 
+ * Dimensionen  erstellt werden, die leicht verändert werden. Die Differenz der Matrix
+ * gibt hierbei die durchschnittliche Fehlerrate an, welche auch zurückgegeben wird.
+ */
 double stability(size_t amount, size_t rows, size_t cols, double lower_bound,
                  double upper_bound) {
+  // Initialisierung von den Zufallsgeneratoren die genutzt werden um zufällige Zahlen
+  // sowie Störungen zu generieren.
   std::random_device random_device;
   std::mt19937 gen(random_device());
   std::uniform_real_distribution<double> number(-10000000, 10000000);
   std::uniform_real_distribution<double> noise(upper_bound, lower_bound);
 
+  // Die durchschnittliche Fehlerrate der Matrizen.
   double avg_difference = 0;
+
+  // Erstellt n Matrizen mit den gegebenen Dimensionen und verändert diese leicht um
+  // die Stabilität des Algorithmus zu prüfen.
   for (size_t iteration = 0; iteration < amount; iteration++) {
+    // Erstellt eine Matrix mit zufälligen Zahlen.
     Matrix input(rows, cols);
     for (size_t row = 0; row < rows; row++) {
       for (size_t col = 0; col < cols; col++) {
@@ -80,6 +96,7 @@ double stability(size_t amount, size_t rows, size_t cols, double lower_bound,
       }
     }
 
+    // Kopiert die originale Matrix und verändert diese leicht.
     Matrix disturbed(input);
     for (size_t row = 0; row < disturbed.rows(); row++) {
       for (size_t col = 0; col < disturbed.cols(); col++) {
@@ -87,12 +104,14 @@ double stability(size_t amount, size_t rows, size_t cols, double lower_bound,
       }
     }
 
+    // Löst beide Matrizen mithilfe des Gauss-Jordan-Verfahrens.
     solve_matrix(input);
     solve_matrix(disturbed);
 
+    // Berechnung der Differenz der beiden Matrizen.
     double difference = 0;
     for (size_t row = 0; row < input.rows(); row++) {
-      for (size_t col = 0; col < input.cols() - 1; col++) {
+      for (size_t col = 0; col < input.cols(); col++) {
         difference += std::abs(input(row, col) - disturbed(row, col));
       }
     }
