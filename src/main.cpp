@@ -64,6 +64,11 @@ void solve(bool debug) {
 int main(int argc, const char *argv[]) {
   args_t args(argc, argv);
 
+  if (args.flag("h")) {
+    print_help();
+    return 0;
+  }
+
   if (args.has_option("s")) {
     int amount = args.int_option("s");
     double lower_bound = args.double_option("l", 1e-12);
