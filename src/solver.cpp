@@ -6,9 +6,11 @@
  * Löst das Gleichungssystem mithilfe des Gauss-Jordan-Verfahrens. Die übergebene
  * Matrix wird dabei verändert.
  */
-void solve_matrix(Matrix &matrix) {
+void solve_matrix(Matrix &matrix, bool debug) {
   // Hilfsvariablen, welche genutzt werden um eine Restmatrix zu verwirklichen.
   size_t p_row = 0, p_col = 0;
+
+  if (debug) std::cout << "Matrix before solving:\n" << matrix << std::endl;
 
   // Ein Teil des 5. Schrittes, indem der Algorithmus immer wieder auf die Restmatrix
   // angewandt wird. Dieser Schritt wird so lange wiederholt, bis es keine Restmatrix
@@ -18,7 +20,18 @@ void solve_matrix(Matrix &matrix) {
     // Null steht.
     if (matrix.is_row_zero(p_row, p_col)) {
       p_col++;
+
+      if (debug) {
+        std::cout << "1.) Step:" << std::endl;
+        std::cout << "Skipped row " << p_row << std::endl;
+        matrix.print(std::cout, p_row, p_col);
+        std::cout << std::endl;
+      }
       continue;
+    } else if (debug) {
+      std::cout << "1.) Not needed:" << std::endl;
+      matrix.print(std::cout, p_row, p_col);
+      std::cout << std::endl;
     }
 
     // 2. Ist die oberste Zahl eine 0, so vertausche die Zeile mit einer anderen
@@ -27,16 +40,37 @@ void solve_matrix(Matrix &matrix) {
       for (size_t row = p_row + 1; row < matrix.rows(); row++) {
         if (matrix(row, p_col) != 0) {
           matrix.swap_rows(p_row, row);
+
+          if (debug) {
+            std::cout << "2.) Step:" << std::endl;
+            std::cout << "Swapped row " << p_row << " with row " << row << std::endl;
+            matrix.print(std::cout, p_row, p_col);
+            std::cout << std::endl;
+          }
           break;
         }
       }
+    } else if (debug) {
+      std::cout << "2.) Not needed:" << std::endl;
+      matrix.print(std::cout, p_row, p_col);
+      std::cout << std::endl;
     }
+
+    if (debug) std::cout << "3.) Step:" << std::endl;
 
     // 3. Nun wird die erste Zeile anhand der ersten Zahl normiert, so dass das
     // erste Element eine 1 ist.
     double factor = matrix(p_row, p_col);
     for (size_t col = p_col; col < matrix.cols(); col++) {
       matrix(p_row, col) /= factor;
+    }
+
+    if (debug) {
+      std::cout << "Normalized row " << p_row << " using the factor " << factor << std::endl;
+      matrix.print(std::cout, p_row, p_col);
+      std::cout << std::endl;
+
+      std::cout << "4.) Step:" << std::endl;
     }
 
     // 4. Nun wird die erste Zahl der übrigen Zeilen zu null gemacht, indem ein
@@ -47,12 +81,33 @@ void solve_matrix(Matrix &matrix) {
       for (size_t col = p_col; col < matrix.cols(); col++) {
         matrix(row, col) -= factor * matrix(p_row, col);
       }
+
+      if (debug) std::cout << "Subtracted row " << p_row << " from row " << row << " using the factor " << factor << std::endl;
+    }
+
+    if (debug) {
+      matrix.print(std::cout, p_row, p_col);
+      std::cout << std::endl;
     }
 
     // 5. Nun streicht man die erste Zeile und Spalte und fährt mit der
     // Restmatrix fort.
     p_col++;
     p_row++;
+
+    if (debug) {
+      std::cout << "5.) Step:" << std::endl;
+      matrix.print(std::cout, p_row, p_col);
+      std::cout << std::endl;
+    }
+  }
+
+  if (debug) {
+    std::cout << "Matrix before 6.) Step:" << std::endl;
+    std::cout << matrix << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "6.) Step:" << std::endl;
   }
 
   // 6. Nun zieht man danach von den darüberliegenden Zeilen entsprechende
@@ -64,7 +119,14 @@ void solve_matrix(Matrix &matrix) {
       for (size_t col = 0; col < matrix.cols(); col++) {
         matrix(u_row, col) -= factor * matrix(index, col);
       }
+
+      if (debug) std::cout << "Subtracted row " << index << " from row " << u_row << " using the factor " << factor << std::endl;
     }
+  }
+
+  if (debug) {
+    std::cout << matrix << std::endl;
+    std::cout << std::endl;
   }
 }
 

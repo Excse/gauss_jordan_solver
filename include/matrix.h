@@ -49,6 +49,8 @@ public:
    */
   friend std::ostream &operator<<(std::ostream &output, Matrix &matrix);
 
+  void print(std::ostream &output, size_t row_off = 0, size_t col_off = 0) const;
+
   /**
    * Prüft ob die übergebene Zeile nur Nullen enthält. Zudem kann mit einem Offset
    * angegeben werden, ab welcher Spalte geprüft werden soll.

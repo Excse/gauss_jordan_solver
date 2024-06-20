@@ -7,7 +7,7 @@
  * Löst das Gleichungssystem mithilfe des Gauss-Jordan-Verfahrens. Die übergebene
  * Matrix wird dabei verändert.
  */
-void solve_matrix(Matrix &matrix);
+void solve_matrix(Matrix &matrix, bool debug = false);
 
 /**
  * Prüft den Algorithmus auf die Stabilität, indem n Matrizen mit den gegebenen 

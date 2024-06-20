@@ -80,16 +80,20 @@ std::istream &operator>>(std::istream &input, Matrix &matrix) {
  * ausgegeben.
  */
 std::ostream &operator<<(std::ostream &input, Matrix &matrix) {
-  for (size_t row = 0; row < matrix.rows(); row++) {
-    for (size_t column = 0; column < matrix.cols(); column++) {
+  matrix.print(input, 0, 0);
+  return input;
+}
+
+void Matrix::print(std::ostream &output, size_t row_off, size_t col_off) const {
+  for (size_t row = row_off; row < this->rows(); row++) {
+    std::cout << row << " | ";
+    for (size_t column = col_off; column < this->cols(); column++) {
       std::cout << std::fixed << std::setprecision(2);
-      std::cout << matrix(row, column) << " ";
+      std::cout << (*this)(row, column) << " ";
     }
 
     std::cout << std::endl;
   }
-
-  return input;
 }
 
 /**

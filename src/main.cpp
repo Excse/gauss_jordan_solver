@@ -25,6 +25,7 @@ void print_help() {
   std::cout << "	-u=<NUMBER>	Setzt die obere Grenze für die "
                "Stabilitätstests."
             << std::endl;
+  std::cout << "	-d		Ausgabe von Debug-Informationen." << std::endl;
 }
 
 /**
@@ -39,7 +40,7 @@ void check_stability(size_t amount, size_t rows, size_t cols,
 /**
 * Löst das eingegebene Gleichungssystem mithilfe des Gauss-Jordan-Algorithmus.
  */
-void solve() {
+void solve(bool debug) {
   size_t rows, columns;
 
   std::cout << "Enter the number of rows: ";
@@ -51,8 +52,8 @@ void solve() {
   Matrix matrix(rows, columns);
   std::cin >> matrix;
 
-  std::cout << "Solving using Gauss-Jordan:" << std::endl;
-  solve_matrix(matrix);
+  std::cout << "Solved using Gauss-Jordan:" << std::endl;
+  solve_matrix(matrix, debug);
   std::cout << matrix;
 }
 
@@ -72,6 +73,6 @@ int main(int argc, const char *argv[]) {
 
     check_stability(amount, rows, cols, lower_bound, upper_bound);
   } else {
-    solve();
+    solve(args.flag("d"));
   }
 }
